@@ -24,7 +24,7 @@ GymCode is a widget that appears in your watch's "at glance" menu. Press the dow
 openssl genrsa 4096 | openssl pkcs8 -topk8 -nocrypt -outform DER -out developer_key
 ```
 
-2. Edit `source/gymcodeview.mc` and set your membership ID:
+2. Edit []`source/gymcodeview.mc` and set your membership ID](https://github.com/nbr23/garmin-gymcode/blob/master/source/GymCodeView.mc#L5):
 
 ```monkey-c
 private const MEMBERSHIP_ID = "YOUR_ID_HERE";
