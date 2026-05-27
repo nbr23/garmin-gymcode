@@ -2,18 +2,48 @@ using Toybox.WatchUi;
 using Toybox.Graphics;
 
 class GymCodeView extends WatchUi.View {
-    private const MEMBERSHIP_ID = ""; // FIXME SET YOUR MEMBERSHIP ID HERE
+    // [name, numeric code] — FIXME set your memberships here
+    private const MEMBERSHIPS = [
+        ["Gym", ""],
+        ["Pool", ""]
+    ];
 
     hidden var _values  = null;
     hidden var _modules = 0;
+    hidden var _index   = 0;
 
     function initialize() {
         View.initialize();
     }
 
-    function onShow() {
-        _values  = Code39.encode(MEMBERSHIP_ID);
+    private function _loadCurrent() {
+        if (MEMBERSHIPS.size() == 0) {
+            return;
+        }
+        _values  = Code39.encode(MEMBERSHIPS[_index][1]);
         _modules = Code39.getTotalModules(_values);
+    }
+
+    function next() {
+        if (MEMBERSHIPS.size() == 0) {
+            return;
+        }
+        _index = (_index + 1) % MEMBERSHIPS.size();
+        _loadCurrent();
+        WatchUi.requestUpdate();
+    }
+
+    function previous() {
+        if (MEMBERSHIPS.size() == 0) {
+            return;
+        }
+        _index = (_index - 1 + MEMBERSHIPS.size()) % MEMBERSHIPS.size();
+        _loadCurrent();
+        WatchUi.requestUpdate();
+    }
+
+    function onShow() {
+        _loadCurrent();
 
         // Force backlight on for barcode scanning
         if (Toybox has :Attention) {
@@ -67,12 +97,12 @@ class GymCodeView extends WatchUi.View {
             }
         }
 
-        // Membership ID text below the barcode
+        // Membership name above the barcode
         dc.drawText(
             w / 2,
-            barY + barHeight + 2,
+            barY - dc.getFontHeight(Graphics.FONT_XTINY) - 2,
             Graphics.FONT_XTINY,
-            MEMBERSHIP_ID,
+            MEMBERSHIPS[_index][0],
             Graphics.TEXT_JUSTIFY_CENTER
         );
     }

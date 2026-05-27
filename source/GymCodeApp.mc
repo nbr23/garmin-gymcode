@@ -8,7 +8,8 @@ class GymCodeApp extends Application.AppBase {
     }
 
     function getInitialView() {
-        return [new GymCodeView(), new GymCodeDelegate()];
+        var view = new GymCodeView();
+        return [view, new GymCodeDelegate(view)];
     }
 
     (:glance)
