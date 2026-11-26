@@ -1,33 +1,22 @@
-# Usage:
-#   make build target=DEVICE_ID
-
-MONKEYC=monkeyc
-JUNGLE=monkey.jungle
-OUT=bin/GymCode.prg
-KEY=developer_key
-target?=fenix7pro
-
-.PHONY: build clean help push
-
-build:
-	@if grep -q 'MEMBERSHIP_ID = ""' source/gymcodeview.mc; then \
-		echo "Error: MEMBERSHIP_ID is not set in source/gymcodeview.mc"; \
-		echo "Please set your membership ID before building."; \
-		exit 1; \
-	fi
-	$(MONKEYC) -d $(target) -f $(JUNGLE) -o $(OUT) -y $(KEY)
-
-clean:
-	rm -f ./bin
-
-push: build
-	./scripts/mtp-push.sh $(OUT)
-
-help:
-	@echo "Makefile targets:"
-	@echo "  build target=DEVICE_ID  Build for specified target (default: fenix7pro)"
-	@echo "  clean                   Remove built files"
-	@echo "  push                    Build and push to watch via libmtp"
-	@echo "  help                    Show this help message"
+MONKEYC ?= monkeyc
+JUNGLE ?= monkey.jungle
+OUT ?= bin/GymCode.prg
+KEY ?= developer_key
+target ?= fenix7pro
 
 .DEFAULT_GOAL := build
+.PHONY: build clean push help
+
+build:
+	"$(MONKEYC)" -d "$(target)" -f "$(JUNGLE)" -o "$(OUT)" -y "$(KEY)"
+
+clean:
+	rm -f -- "$(OUT)"
+
+push: build
+	./scripts/mtp-push.sh "$(OUT)"
+
+help:
+	@echo "  build   Build $(OUT) for target=$(target)"
+	@echo "  clean   Remove build outputs"
+	@echo "  push    Build and copy $(OUT) to the watch over MTP"

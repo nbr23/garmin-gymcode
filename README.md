@@ -43,10 +43,4 @@ make build target=fenix7pro
 
 4. Transfer to watch:
 
-Via MTP (requires libmtp)
-- macOS: brew install libmtp
-- Ubuntu/Debian: sudo apt install libmtp-1 libmtp-dev libmtp-bin
-
-`make push`
-
-Or manually copy bin/GymCode.prg to /GARMIN/Apps on your watch
+Run `make push`, which copies `bin/GymCode.prg` to `GARMIN/Apps/` over MTP with libmtp (`brew install libmtp` or `apt install mtp-tools`), or copy it there with any MTP file manager.

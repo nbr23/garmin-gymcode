@@ -1,56 +1,46 @@
-#!/bin/bash
-# Push .prg file to Garmin watch via MTP (macOS/Linux)
-# Requires: libmtp (brew install libmtp on macOS, apt install on Ubuntu/Debian)
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
+if [[ $# -eq 0 ]]; then
+    echo "Usage: $0 app.prg [app.prg ...]" >&2
+    exit 1
+fi
 
-# If no argument provided, try to auto-detect .prg file in ./bin
-if [ -z "$1" ]; then
-    PRG_FILES=(bin/*.prg)
-
-    # Check if any .prg files exist
-    if [ ! -e "${PRG_FILES[0]}" ]; then
-        echo "Error: No .prg files found in ./bin directory."
-        echo "Usage: $0 [path/to/file.prg]"
+for prg in "$@"; do
+    if [[ ! -f "$prg" ]]; then
+        echo "Error: $prg not found; run 'make build' first." >&2
         exit 1
     fi
+done
 
-    # Check if there's exactly one .prg file
-    if [ ${#PRG_FILES[@]} -eq 1 ]; then
-        PRG_FILE="${PRG_FILES[0]}"
-    else
-        echo "Error: Multiple .prg files found in ./bin directory:"
-        printf '  %s\n' "${PRG_FILES[@]}"
-        echo "Please specify which file to push: $0 <file.prg>"
+if ! command -v mtp-connect >/dev/null 2>&1; then
+    echo "Error: libmtp not installed. Install with: brew install libmtp (macOS) or apt install mtp-tools (Debian/Ubuntu)" >&2
+    exit 1
+fi
+
+# macOS ptpcamerad grabs the MTP device as soon as it appears; keep killing it for the duration of the transfer.
+suppress_ptpcamerad() {
+    while :; do
+        killall -9 ptpcamerad 2>/dev/null || true
+        sleep 0.2
+    done
+}
+
+if [[ "$(uname -s)" == Darwin ]]; then
+    suppress_ptpcamerad &
+    suppressor=$!
+    trap 'kill "$suppressor" 2>/dev/null || true' EXIT
+    sleep 1
+fi
+
+for prg in "$@"; do
+    echo "Sending $(basename "$prg") to the watch..."
+    status=0
+    output=$(mtp-connect --sendfile "$prg" "/GARMIN/Apps" 2>&1) || status=$?
+    printf '%s\n' "$output"
+    if [[ $status -ne 0 ]] || ! grep -q '^New file ID:' <<<"$output"; then
+        echo "Error: failed to send $(basename "$prg"). Replug the watch and retry." >&2
         exit 1
     fi
-else
-    PRG_FILE="$1"
-fi
-
-if [ ! -f "$PRG_FILE" ]; then
-    echo "Error: $PRG_FILE not found."
-    exit 1
-fi
-
-if ! command -v mtp-connect &> /dev/null; then
-    echo "Error: libmtp not installed."
-    echo "Install with:"
-    echo "  macOS: brew install libmtp"
-    echo "  Ubuntu/Debian: sudo apt install libmtp-1 libmtp-dev libmtp-bin"
-    exit 1
-fi
-
-echo "Sending $PRG_FILE to Garmin watch..."
-
-# Use mtp-connect with --sendfile which accepts a path
-# Capture output to check for "No devices"
-OUTPUT=$(mtp-connect --sendfile "$PRG_FILE" "/GARMIN/Apps" 2>&1)
-
-if echo "$OUTPUT" | grep -q "No devices"; then
-    echo "Error: No Garmin watch detected via MTP."
-    echo "Please connect your watch in MTP mode and try again."
-    exit 1
-fi
-
-echo "Done! Disconnect watch and check your Garmin apps."
+done
+echo "Done. Disconnect the watch to install."
