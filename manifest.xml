@@ -3,6 +3,7 @@
     <iq:application entry="GymCodeApp" id="de20eb4a-5737-4758-92b9-bd6c70969c57" name="@Strings.AppName" type="widget" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="4.2.0">
         <iq:products>
             <iq:product id="fenix7pro"/>
+            <iq:product id="fr970"/>
         </iq:products>
         <iq:permissions/>
         <iq:languages>

@@ -46,11 +46,7 @@ class GymCodeView extends WatchUi.View {
         _loadCurrent();
 
         // Force backlight on for barcode scanning
-        if (Toybox has :Attention) {
-            if (Toybox.Attention has :backlight) {
-                Toybox.Attention.backlight(true);
-            }
-        }
+        _setBacklight(true);
     }
 
     function onUpdate(dc) {
@@ -108,9 +104,15 @@ class GymCodeView extends WatchUi.View {
     }
 
     function onHide() {
-        if (Toybox has :Attention) {
-            if (Toybox.Attention has :backlight) {
-                Toybox.Attention.backlight(false);
+        _setBacklight(false);
+    }
+
+    private function _setBacklight(on) {
+        if (Toybox has :Attention && Toybox.Attention has :backlight) {
+            try {
+                Toybox.Attention.backlight(on);
+            } catch (e instanceof Toybox.Attention.BacklightOnTooLongException) {
+                // AMOLED burn-in protection (e.g. fr970) refuses to hold the display on; keep showing the barcode
             }
         }
     }

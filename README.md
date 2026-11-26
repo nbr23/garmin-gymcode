@@ -6,7 +6,7 @@ Display your gym membership barcode (Code 39 support only) on your Garmin watch.
   <img src="docs/gymcode.png" width="300" alt="GymCode on Garmin Watch">
 </p>
 
-This application has been tested and verified to work on the **Fenix 7 Pro**. Change `target` to match your device in the Makefile (e.g., `vivoactive4`, `fenix6`)
+This application has been tested and verified to work on the **Fenix 7 Pro**, and also targets the **Forerunner 970** (`make build target=fr970`). To use another device, add it to `manifest.xml` and set `target` to match it (e.g., `vivoactive4`, `fenix6`)
 
 ## Widget
 
