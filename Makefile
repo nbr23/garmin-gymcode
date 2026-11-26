@@ -2,7 +2,7 @@ MONKEYC ?= monkeyc
 JUNGLE ?= monkey.jungle
 OUT ?= bin/GymCode.prg
 KEY ?= developer_key
-target ?= fenix7pro
+target ?= fr970
 
 .DEFAULT_GOAL := build
 .PHONY: build clean push help
