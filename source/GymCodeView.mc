@@ -2,12 +2,6 @@ using Toybox.WatchUi;
 using Toybox.Graphics;
 
 class GymCodeView extends WatchUi.View {
-    // [name, numeric code] — FIXME set your memberships here
-    private const MEMBERSHIPS = [
-        ["Gym", ""],
-        ["Pool", ""]
-    ];
-
     hidden var _values  = null;
     hidden var _modules = 0;
     hidden var _index   = 0;
@@ -17,27 +11,27 @@ class GymCodeView extends WatchUi.View {
     }
 
     private function _loadCurrent() {
-        if (MEMBERSHIPS.size() == 0) {
+        if (BuildConfig.MEMBERSHIPS.size() == 0) {
             return;
         }
-        _values  = Code39.encode(MEMBERSHIPS[_index][1]);
+        _values  = Code39.encode(BuildConfig.MEMBERSHIPS[_index][1]);
         _modules = Code39.getTotalModules(_values);
     }
 
     function next() {
-        if (MEMBERSHIPS.size() == 0) {
+        if (BuildConfig.MEMBERSHIPS.size() == 0) {
             return;
         }
-        _index = (_index + 1) % MEMBERSHIPS.size();
+        _index = (_index + 1) % BuildConfig.MEMBERSHIPS.size();
         _loadCurrent();
         WatchUi.requestUpdate();
     }
 
     function previous() {
-        if (MEMBERSHIPS.size() == 0) {
+        if (BuildConfig.MEMBERSHIPS.size() == 0) {
             return;
         }
-        _index = (_index - 1 + MEMBERSHIPS.size()) % MEMBERSHIPS.size();
+        _index = (_index - 1 + BuildConfig.MEMBERSHIPS.size()) % BuildConfig.MEMBERSHIPS.size();
         _loadCurrent();
         WatchUi.requestUpdate();
     }
@@ -98,7 +92,7 @@ class GymCodeView extends WatchUi.View {
             w / 2,
             barY - dc.getFontHeight(Graphics.FONT_XTINY) - 2,
             Graphics.FONT_XTINY,
-            MEMBERSHIPS[_index][0],
+            BuildConfig.MEMBERSHIPS[_index][0],
             Graphics.TEXT_JUSTIFY_CENTER
         );
     }

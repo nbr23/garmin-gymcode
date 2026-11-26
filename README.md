@@ -26,14 +26,13 @@ Multiple memberships are supported: use the up/down buttons while the widget is 
 openssl genrsa 4096 | openssl pkcs8 -topk8 -nocrypt -outform DER -out developer_key
 ```
 
-2. Edit [`source/GymCodeView.mc` and set your memberships](https://github.com/nbr23/garmin-gymcode/blob/master/source/GymCodeView.mc#L6) as an array of `[name, numeric code]` rows:
+2. Copy `.env.example` to `.env` and set your memberships as `Name:code` entries separated by `;` (codes are digits only; the first entry is the one the widget opens on):
 
-```monkey-c
-private const MEMBERSHIPS = [
-    ["Gym",  "87654321"],
-    ["Pool", "12345678"]
-];
+```bash
+MEMBERSHIPS=Gym:87654321;Pool:12345678
 ```
+
+`make` runs `scripts/gen-config.sh`, which turns this into `source/BuildConfig.mc` (gitignored, like `.env`) before compiling. A `MEMBERSHIPS` environment variable overrides `.env`. The build fails if no memberships are set or a code contains a non-digit.
 
 3. Build the app:
 

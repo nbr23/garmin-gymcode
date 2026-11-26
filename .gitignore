@@ -1,2 +1,4 @@
 bin/
 developer_key
+.env
+source/BuildConfig.mc
