@@ -5,38 +5,56 @@ class GymCodeView extends WatchUi.View {
     hidden var _values  = null;
     hidden var _modules = 0;
     hidden var _index   = 0;
+    hidden var _entries = [];
 
     function initialize() {
         View.initialize();
     }
 
     private function _loadCurrent() {
-        if (BuildConfig.MEMBERSHIPS.size() == 0) {
+        if (_entries.size() == 0) {
+            _values = null;
             return;
         }
-        _values  = Code39.encode(BuildConfig.MEMBERSHIPS[_index][1]);
+        _values  = Code39.encode(_entries[_index][1]);
         _modules = Code39.getTotalModules(_values);
     }
 
+    function select(index) {
+        _index = index;
+    }
+
+    function currentIndex() {
+        return _index;
+    }
+
+    function currentName() {
+        return _entries.size() == 0 ? null : _entries[_index][0];
+    }
+
     function next() {
-        if (BuildConfig.MEMBERSHIPS.size() == 0) {
+        if (_entries.size() == 0) {
             return;
         }
-        _index = (_index + 1) % BuildConfig.MEMBERSHIPS.size();
+        _index = (_index + 1) % _entries.size();
         _loadCurrent();
         WatchUi.requestUpdate();
     }
 
     function previous() {
-        if (BuildConfig.MEMBERSHIPS.size() == 0) {
+        if (_entries.size() == 0) {
             return;
         }
-        _index = (_index - 1 + BuildConfig.MEMBERSHIPS.size()) % BuildConfig.MEMBERSHIPS.size();
+        _index = (_index - 1 + _entries.size()) % _entries.size();
         _loadCurrent();
         WatchUi.requestUpdate();
     }
 
     function onShow() {
+        _entries = Memberships.all();
+        if (_index >= _entries.size()) {
+            _index = _entries.size() == 0 ? 0 : _entries.size() - 1;
+        }
         _loadCurrent();
 
         // Force backlight on for barcode scanning
@@ -51,6 +69,14 @@ class GymCodeView extends WatchUi.View {
         dc.clear();
 
         if (_values == null) {
+            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
+            dc.drawText(
+                w / 2,
+                h / 2,
+                Graphics.FONT_SMALL,
+                WatchUi.loadResource(Rez.Strings.EmptyHint),
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+            );
             return;
         }
 
@@ -92,7 +118,7 @@ class GymCodeView extends WatchUi.View {
             w / 2,
             barY - dc.getFontHeight(Graphics.FONT_XTINY) - 2,
             Graphics.FONT_XTINY,
-            BuildConfig.MEMBERSHIPS[_index][0],
+            _entries[_index][0],
             Graphics.TEXT_JUSTIFY_CENTER
         );
     }

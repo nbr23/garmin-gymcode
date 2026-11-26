@@ -1,3 +1,10 @@
 <strings>
     <string id="AppName">GymCode</string>
+    <string id="AddCode">Add code</string>
+    <string id="DeleteCode">Delete</string>
+    <string id="NamePrompt">Name</string>
+    <string id="CodePrompt">Code</string>
+    <string id="DefaultName">Code</string>
+    <string id="Ok">OK</string>
+    <string id="EmptyHint">Hold UP\nto add a code</string>
 </strings>

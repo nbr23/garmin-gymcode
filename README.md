@@ -14,6 +14,8 @@ GymCode is a widget that appears in your watch's "at glance" menu. Press the dow
 
 Multiple memberships are supported: use the up/down buttons while the widget is open to cycle through them (wraps at both ends). The active membership's name is shown above the barcode. The widget always opens on the first entry.
 
+To add a membership on the watch, hold UP while the widget is open and pick **Add code**: enter a name, then the digits, one character at a time (BACK deletes the last character, OK finishes). Added codes are stored on the watch and listed after the built-in ones. The same menu offers **Delete** while an added code is shown; codes built in from `.env` can only be removed by rebuilding.
+
 ## Requirements
 
 - [Connect IQ SDK](https://developer.garmin.com/connect-iq/sdk/) installed and `monkeyc` in your PATH
@@ -26,13 +28,13 @@ Multiple memberships are supported: use the up/down buttons while the widget is 
 openssl genrsa 4096 | openssl pkcs8 -topk8 -nocrypt -outform DER -out developer_key
 ```
 
-2. Copy `.env.example` to `.env` and set your memberships as `Name:code` entries separated by `;` (codes are digits only; the first entry is the one the widget opens on):
+2. Optionally, copy `.env.example` to `.env` and set built-in memberships as `Name:code` entries separated by `;` (codes are digits only; the first entry is the one the widget opens on). Without it the widget starts empty and codes are added on the watch:
 
 ```bash
 MEMBERSHIPS=Gym:87654321;Pool:12345678
 ```
 
-`make` runs `scripts/gen-config.sh`, which turns this into `source/BuildConfig.mc` (gitignored, like `.env`) before compiling. A `MEMBERSHIPS` environment variable overrides `.env`. The build fails if no memberships are set or a code contains a non-digit.
+`make` runs `scripts/gen-config.sh`, which turns this into `source/BuildConfig.mc` (gitignored, like `.env`) before compiling. A `MEMBERSHIPS` environment variable overrides `.env`. The build fails if a code contains a non-digit.
 
 3. Build the app:
 

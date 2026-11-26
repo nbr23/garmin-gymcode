@@ -20,8 +20,6 @@ die() {
 escape() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 
 MEMBERSHIPS="${MEMBERSHIPS:-$(from_env_file MEMBERSHIPS)}"
-[[ -n "$MEMBERSHIPS" ]] || die "MEMBERSHIPS is not set. Set it in .env as Name:code entries separated by ';', e.g." \
-    "  MEMBERSHIPS=Gym:87654321;Pool:12345678"
 
 membership_entries() {
     local IFS=';' entry name code
@@ -37,7 +35,6 @@ membership_entries() {
 }
 
 ENTRIES="$(membership_entries)"
-[[ -n "$ENTRIES" ]] || die "MEMBERSHIPS has no entries"
 ENTRIES="${ENTRIES%,}"
 
 cat > "$OUT" << EOF
