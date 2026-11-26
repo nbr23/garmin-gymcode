@@ -1,14 +1,15 @@
 using Toybox.WatchUi;
 
-class MembershipMenu extends WatchUi.Menu2 {
+module MembershipMenu {
 
-    function initialize(view) {
-        Menu2.initialize({:title => Rez.Strings.AppName});
-        addItem(new WatchUi.MenuItem(Rez.Strings.AddCode, null, :add, null));
+    function create(view) {
+        var menu = new WatchUi.Menu2({:title => Rez.Strings.AppName});
+        menu.addItem(new WatchUi.MenuItem(Rez.Strings.AddCode, null, :add, null));
         var name = view.currentName();
         if (name != null && Memberships.isStored(view.currentIndex())) {
-            addItem(new WatchUi.MenuItem(Rez.Strings.DeleteCode, name, :delete, null));
+            menu.addItem(new WatchUi.MenuItem(Rez.Strings.DeleteCode, name, :delete, null));
         }
+        return menu;
     }
 }
 

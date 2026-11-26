@@ -9,7 +9,7 @@ class GymCodeDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onMenu() {
-        WatchUi.pushView(new MembershipMenu(_view), new MembershipMenuDelegate(_view), WatchUi.SLIDE_UP);
+        WatchUi.pushView(MembershipMenu.create(_view), new MembershipMenuDelegate(_view), WatchUi.SLIDE_UP);
         return true;
     }
 
