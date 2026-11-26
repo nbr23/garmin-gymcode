@@ -1,5 +1,6 @@
 using Toybox.WatchUi;
 using Toybox.Graphics;
+using Toybox.System;
 
 class GymCodeView extends WatchUi.View {
     hidden var _values  = null;
@@ -58,7 +59,7 @@ class GymCodeView extends WatchUi.View {
         _loadCurrent();
 
         // Force backlight on for barcode scanning
-        _backlightOn();
+        _setBacklight(true);
     }
 
     function onUpdate(dc) {
@@ -123,10 +124,17 @@ class GymCodeView extends WatchUi.View {
         );
     }
 
-    private function _backlightOn() {
+    function onHide() {
+        // AMOLED has no separate backlight: switching it off blanks the whole display
+        if (!System.getDeviceSettings().requiresBurnInProtection) {
+            _setBacklight(false);
+        }
+    }
+
+    private function _setBacklight(on) {
         if (Toybox has :Attention && Toybox.Attention has :backlight) {
             try {
-                Toybox.Attention.backlight(true);
+                Toybox.Attention.backlight(on);
             } catch (e instanceof Toybox.Attention.BacklightOnTooLongException) {
                 // AMOLED burn-in protection (e.g. fr970) refuses to hold the display on; keep showing the barcode
             }
